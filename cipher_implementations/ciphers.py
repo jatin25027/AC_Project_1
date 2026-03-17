@@ -93,7 +93,7 @@ class Skinny64_64:
         return self._from_nibbles(state), intermediates
 
 # ============================================================================
-# 2. GIFT-64 (2017, SPN, Bit-permutation based)
+# 2. GIFT-64 , GIFT-64 uses a 4-bit S-box and a strict bit-permutation layer
 # ============================================================================
 class Gift64:
     NAME = "GIFT-64"

@@ -69,7 +69,7 @@ def save_results(results, filepath):
         return o
     with open(filepath, 'w') as f:
         json.dump(results, f, indent=2, default=convert)
-
+#load results from JSON, converting lists back to numpy arrays where appropriate
 def load_results(filepath):
     """Load results dictionary from JSON."""
     with open(filepath, 'r') as f:
