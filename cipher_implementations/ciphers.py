@@ -16,6 +16,10 @@ def rand_key(bits):
 # ============================================================================
 # 1. SKINNY-64/64 (2016, SPN, Tweakable block cipher)
 # ============================================================================
+# SKINNY uses a substitution-permutation network (SPN) structure.
+# Key components: 4-bit S-box substitution, bit permutation layer, round constants.
+# Supports configurable rounds for analyzing reduced-round variants in the ML pipeline.
+# The encrypt_with_intermediates method exposes internal states for cryptanalysis.
 class Skinny64_64:
     NAME = "SKINNY-64/64"
     BLOCK_SIZE = 64
