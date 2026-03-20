@@ -351,6 +351,7 @@ class Warp:
 
 # ============================================================================
 # 6. PIPO-64/128 (2020, SPN, Unbalanced bridge)
+# PIPO-64 implements a lightweight SPN round function
 # ============================================================================
 class Pipo64:
     NAME = "PIPO-64/128"
