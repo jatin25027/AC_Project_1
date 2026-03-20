@@ -406,6 +406,10 @@ class Pipo64:
 # ============================================================================
 # 7. ASCON (2019, SPN/Sponge)
 # ============================================================================
+# ASCON is a lightweight authenticated encryption algorithm with permutation-based design.
+# Combines substitution-permutation network (SPN) concepts with sponge construction.
+# 64-bit blocks and 128-bit keys make it suitable for resource-constrained devices.
+# Round function uses S-box substitution, bit permutation, and XOR mixing operations.
 class Ascon:
     NAME = "ASCON"
     BLOCK_SIZE = 64
