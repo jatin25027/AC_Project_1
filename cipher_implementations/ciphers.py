@@ -469,6 +469,10 @@ class Ascon:
 # ============================================================================
 # 8. SATURNIN (2019, SPN)
 # ============================================================================
+# SATURNIN is a tweakable block cipher based on substitution-permutation networks.
+# Designed specifically for cryptanalysis research with 64-bit blocks and 128-bit keys.
+# Features 10 default rounds with configurable round count for reduced-round analysis.
+# Combines 4-bit S-box substitutions with sophisticated bit permutation layers.
 class Saturnin:
     NAME = "SATURNIN"
     BLOCK_SIZE = 64
