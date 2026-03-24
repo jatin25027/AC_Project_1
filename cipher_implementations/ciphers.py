@@ -505,6 +505,7 @@ class Saturnin:
 
 # ============================================================================
 # 9. CHAM-64/128 (2017, ARX)
+# CHAM is an ARX cipher requiring no S-boxes, optimized for software
 # ============================================================================
 class Cham64:
     NAME = "CHAM-64/128"
