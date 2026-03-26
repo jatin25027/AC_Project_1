@@ -570,6 +570,10 @@ class Cham64:
 # ============================================================================
 # 10. XOODOO (2018, SPN permutation, used as EM block cipher)
 # ============================================================================
+# XOODOO is a lightweight cryptographic permutation with SPN structure.
+# Originally designed as a permutation-based primitive, adapted here as a block cipher.
+# Uses bit rotation and XOR operations for efficient hardware/software implementation.
+# 6 default rounds provide good security margin for cryptanalysis experiments.
 class Xoodoo_EM:
     NAME = "XOODOO"
     BLOCK_SIZE = 64
