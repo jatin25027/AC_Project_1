@@ -230,6 +230,7 @@ class Gift128:
 
 # ============================================================================
 # 4. CRAFT (2019, SPN, Involutory)
+# CRAFT uses involutory S-boxes, making encryption and decryption identical
 # ============================================================================
 class Craft:
     NAME = "CRAFT"
