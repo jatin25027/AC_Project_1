@@ -657,6 +657,10 @@ class Gimli_EM:
 # ============================================================================
 # 12. SPARKLE (2019, ARX permutation)
 # ============================================================================
+# SPARKLE is an ARX (Addition, Rotation, XOR) permutation designed for authenticated encryption.
+# Uses the Alzette round function which combines addition, rotation, and XOR operations.
+# ARX structure provides efficient constant-time implementations on modern processors.
+# Designed as a lightweight alternative to SPN ciphers with similar security properties.
 class Sparkle_EM:
     NAME = "SPARKLE"
     BLOCK_SIZE = 64
