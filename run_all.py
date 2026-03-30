@@ -2,6 +2,7 @@
 Main orchestrator script to run all experiments for the ML Cryptanalysis project.
 It loops through all 14 ciphers, representations, models, and generates final plots.
 """
+# Set up plotting metrics for neural cryptanalysis evaluation
 import os, sys
 import numpy as np
 import pandas as pd
