@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Cryptanalysis Lab</title>
+    <meta name="description" content="Interactive ML-based cryptanalysis workbench supporting 14 lightweight ciphers, 4 neural models, and 10 input representations.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">🔏</span>
+            <h1>Neural Cryptanalysis <span>Lab</span></h1>
+        </div>
+        <div class="header-badges">
+            <span class="badge">14 Ciphers</span>
+            <span class="badge highlight">4 Models</span>
+            <span class="badge accent2">10 Representations</span>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- ── Sidebar Controls ─────────────────────────────────────────── -->
+        <aside class="sidebar">
+            <div class="panel">
+                <h2>Experiment Setup</h2>
+
+                <!-- Experiment Type -->
+                <div class="form-group">
+                    <label for="exp-type">Experiment Type</label>
+                    <select id="exp-type">
+                        <optgroup label="Main Analysis">
+                            <option value="exp_rep">① Input Representation Analysis</option>
+                            <option value="exp_model">② Model Architecture Comparison</option>
+                            <option value="exp_round">③ Round Limits Analysis</option>
+                            <option value="exp_cm">④ Confusion Matrix</option>
+                            <option value="exp_dist">⑤ Dataset Distribution</option>
+                        </optgroup>
+                        <optgroup label="Bonus Tasks">
+                            <option value="bonus_diff">Difference Search</option>
+                            <option value="bonus_class">Classical vs ML</option>
+                            <option value="bonus_trans">Transfer Learning</option>
+                            <option value="bonus_key">Key Recovery</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <!-- Experiment description card -->
+                <div class="exp-desc-card" id="exp-desc-card">
+                    <span class="exp-desc-icon" id="exp-desc-icon">🔬</span>
+                    <p id="exp-desc-text">Select an experiment type to see details.</p>
+                </div>
+
+                <!-- Ciphers (multi-select) -->
+                <div class="form-group" id="cipher-group">
+                    <label>Ciphers <span class="label-hint">(hold Ctrl/⌘ for multiple)</span></label>
+                    <select id="cipher-select" multiple size="5">
+                        <!-- Populated via API -->
+                    </select>
+                </div>
+
+                <!-- Models (multi-select) -->
+                <div class="form-group" id="model-group">
+                    <label>Models <span class="label-hint">(hold Ctrl/⌘ for multiple)</span></label>
+                    <select id="model-select" multiple size="4">
+                        <!-- Populated via API -->
+                    </select>
+                </div>
+
+                <!-- Representations (multi-select) -->
+                <div class="form-group" id="rep-group">
+                    <label>Representation <span class="label-hint">(hold Ctrl/⌘ for multiple)</span></label>
+                    <select id="rep-select" multiple size="5">
+                        <!-- Populated via API -->
+                    </select>
+                </div>
+
+                <!-- Round sweep (for Round Analysis) -->
+                <div class="form-group" id="round-sweep-group" style="display:none;">
+                    <label for="round-sweep-input">Rounds to Sweep <span class="label-hint">(comma-separated)</span></label>
+                    <input type="text" id="round-sweep-input" value="3,4,5,6,7" placeholder="e.g. 3,4,5,6,7">
+                </div>
+
+                <!-- Single rounds (for all other experiments) -->
+                <div class="form-group row-group" id="single-round-row">
+                    <div class="sub-group" id="rounds-group">
+                        <label for="rounds-input">Rounds</label>
+                        <input type="number" id="rounds-input" value="3" min="1" max="50">
+                    </div>
+                    <div class="sub-group" id="samples-group">
+                        <label for="samples-input" id="samples-label">Samples</label>
+                        <input type="number" id="samples-input" value="2000" min="100" step="100">
+                    </div>
+                </div>
+
+                <!-- Epochs (always visible for ML experiments) -->
+                <div class="form-group row-group" id="epochs-row">
+                    <div class="sub-group">
+                        <label for="epochs-input">Epochs</label>
+                        <input type="number" id="epochs-input" value="8" min="1" max="50">
+                    </div>
+                    <!-- Transfer learning: source rounds -->
+                    <div class="sub-group" id="src-rounds-group" style="display:none;">
+                        <label for="src-rounds-input">Source Rounds</label>
+                        <input type="number" id="src-rounds-input" value="3" min="1" max="50">
+                    </div>
+                </div>
+
+                <button id="run-btn" class="btn primary">
+                    <span class="btn-icon">▶</span> Run Experiment
+                </button>
+
+                <div class="divider"></div>
+
+                <!-- Run Full Pipeline -->
+                <button id="pipeline-btn" class="btn pipeline">
+                    <span class="btn-icon">⚡</span> Run Full Pipeline
+                    <span class="pipeline-sub">All 4 Experiments</span>
+                </button>
+                <p class="pipeline-note">Mirrors <code>run_all.py __main__</code> — runs Exp 1–4 sequentially with selected params.</p>
+            </div>
+
+            <!-- Cipher Info Panel -->
+            <div class="panel context-panel" id="context-panel" style="display:none;">
+                <h3>Cipher Info</h3>
+                <div id="cipher-info" class="info-grid"></div>
+            </div>
+
+            <!-- Pipeline Status Panel (only shown during pipeline) -->
+            <div class="panel pipeline-status-panel" id="pipeline-status-panel" style="display:none;">
+                <h3>Pipeline Progress</h3>
+                <div id="pipeline-steps">
+                    <div class="pipe-step" id="pipe-step-1" data-state="pending">
+                        <span class="pipe-dot"></span>
+                        <span>① Representation Analysis</span>
+                    </div>
+                    <div class="pipe-step" id="pipe-step-2" data-state="pending">
+                        <span class="pipe-dot"></span>
+                        <span>② Model Comparison</span>
+                    </div>
+                    <div class="pipe-step" id="pipe-step-3" data-state="pending">
+                        <span class="pipe-dot"></span>
+                        <span>③ Round Analysis</span>
+                    </div>
+                    <div class="pipe-step" id="pipe-step-4" data-state="pending">
+                        <span class="pipe-dot"></span>
+                        <span>④ Confusion Matrix</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ── Main Display Area ────────────────────────────────────────── -->
+        <section class="display-area">
+
+            <!-- Active Job View -->
+            <div id="job-view" class="view-panel" style="display:none;">
+                <div class="job-header">
+                    <h2><span class="spinner"></span> <span id="job-title">Running Experiment...</span></h2>
+                    <span class="job-id" id="current-job-id"></span>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text">0%</span>
+                </div>
+
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="mac-btns"><span></span><span></span><span></span></div>
+                        <span class="term-title">training_log.sh</span>
+                    </div>
+                    <div class="terminal-body" id="log-console"></div>
+                </div>
+            </div>
+
+            <!-- Results View -->
+            <div id="results-view" class="view-panel">
+                <div class="results-placeholder" id="placeholder-msg">
+                    <div class="placeholder-icon">🔬</div>
+                    <h2>Ready for Analysis</h2>
+                    <p>Configure an experiment on the left and click <strong>Run Experiment</strong> or <strong>Run Full Pipeline</strong> to start.</p>
+                    <div class="quick-tips">
+                        <div class="tip-item">
+                            <span class="tip-key">Ctrl+Click</span> to select multiple ciphers / models / representations
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-key">Full Pipeline</span> mirrors <code>python run_all.py</code> and runs all 4 experiments
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-content" id="results-content" style="display:none;">
+                    <div class="results-header">
+                        <div>
+                            <h2 id="results-title">Results</h2>
+                            <p class="results-subtitle" id="results-subtitle"></p>
+                        </div>
+                        <div class="results-stats" id="results-stats"></div>
+                    </div>
+
+                    <!-- Plot -->
+                    <div class="plot-container">
+                        <img id="result-plot" src="" alt="Experiment Result Plot">
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="data-table-container" id="data-table-container" style="display:none;">
+                        <div class="data-table-header">
+                            <h3>📊 Detailed Results Table</h3>
+                            <button class="btn-icon-only" id="copy-table-btn" title="Copy as CSV">⬇ CSV</button>
+                        </div>
+                        <div class="table-scroll">
+                            <table id="results-table" class="results-table">
+                                <thead id="results-table-head"></thead>
+                                <tbody id="results-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Raw JSON (for non-tabular results) -->
+                    <div class="raw-data-container" id="raw-data-container" style="display:none;">
+                        <h3>Detailed Metrics</h3>
+                        <pre id="raw-data"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline results grid (shown when pipeline completes) -->
+            <div id="pipeline-results-view" class="view-panel" style="display:none;">
+                <div class="results-header">
+                    <h2>⚡ Full Pipeline Results</h2>
+                    <span class="stat-pill">All 4 Experiments</span>
+                </div>
+                <div class="pipeline-grid" id="pipeline-grid"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

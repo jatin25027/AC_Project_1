@@ -1,42 +1,75 @@
-# Neural Cryptanalysis: Evaluating ML-based Distinguishers
+---
+title: Neural Cryptanalysis Lab
+emoji: 🔏
+colorFrom: purple
+colorTo: green
+sdk: docker
+pinned: true
+---
 
-This project focuses on evaluating Machine Learning-based cryptanalysis on 14 modern block ciphers proposed in the last 10 years (2016–2026). It supports 10 different input data representations and 4 separate neural architectures.
+# 🔏 Neural Cryptanalysis Lab
 
-## Requirements
-* Python 3.8+
-* PyTorch
-* NumPy
-* Pandas
-* Seaborn / Matplotlib
-* Scipy
+> **Interactive web application** for evaluating ML-based neural distinguishers on 14 modern lightweight block ciphers.
 
-Install dependencies via:
+[![HuggingFace Space](https://img.shields.io/badge/🤗_HuggingFace-Space-yellow)](https://huggingface.co/spaces/)
+
+---
+
+## 🌐 Web App Features
+
+Run all experiments **without touching the command line**:
+
+| Experiment | Description |
+|---|---|
+| ① Representation Analysis | Tests all 10 input representations — which format best distinguishes cipher from random? |
+| ② Model Comparison | Benchmarks MLP, CNN, SiameseNet, and MINE on the same configuration |
+| ③ Round Limits Analysis | Sweeps round counts to find the security boundary of each cipher |
+| ④ Confusion Matrix | Visual heatmap of true vs predicted labels for selected ciphers |
+| ⑤ Dataset Distribution | Hamming weight distribution of ΔC vs ideal random |
+| ⚡ Full Pipeline | Runs all 4 experiments sequentially — mirrors `python run_all.py` |
+
+**Bonus Tasks:**
+- 🔍 Differential Characteristic Search
+- ⚖️ Classical Cryptanalysis vs ML Comparison
+- 🔀 Transfer Learning across round counts
+- 🔑 Partial Key Recovery via distinguisher scoring
+
+### Key UI Features
+- **Multi-select** ciphers, models, representations
+- **Round sweep** field (comma-separated, e.g. `3,4,5,6,7`)
+- **Live terminal** log during training (SSE streaming)
+- **Results table** with colour-coded accuracy + CSV export
+- **Pipeline mode** shows all 4 plots in a grid on completion
+
+---
+
+## 🛠 Running Locally
+
 ```bash
+git clone https://huggingface.co/spaces/<your-username>/neural-cryptanalysis
+cd neural-cryptanalysis
 pip install -r requirements.txt
+python3 backend_main.py
+# Open http://localhost:7860
 ```
 
-## Running the Interactive Orchestrator
-To execute the comprehensive comparisons and generate the final visualization plots, use the interactive orchestrator:
-
+Or via the original CLI orchestrator:
 ```bash
 python3 run_all.py
 ```
 
-The CLI will prompt you to enter indices for the following 3 Experiments:
-1. **Input Representation Analysis**: Compare up to 10 representation types across chosen ciphers.
-2. **Model Architecture Comparison**: Evaluate MLP, CNN, SiameseNet, or MINE.
-3. **Round Limits Analysis**: Compare limits of ML distinguishers as round counts scale upwards.
+---
 
-*(Note: Graphs will be autosaved to `results/plots/`)*
+## 🧱 Tech Stack
 
-## Running the Bonus Tasks
-4 independent bonus proofs of concept are included:
-1. **Heuristic Search:** `python3 bonus_tasks/difference_search.py`
-2. **Classical vs ML Compare:** `python3 bonus_tasks/classical_comparison.py` 
-3. **Transfer Learning:** `python3 bonus_tasks/transfer_learning.py`
-4. **Key Recovery:** `python3 bonus_tasks/key_recovery.py`
+- **Backend**: FastAPI + Uvicorn, background threading, SSE streaming
+- **ML**: PyTorch (MLP, CNN, SiameseNet, MINE), scikit-learn
+- **Frontend**: Vanilla HTML/CSS/JS — zero dependencies
+- **Ciphers (14)**: SKINNY, CRAFT, ASCON, SATURNIN, GIFT-64/128, XOODOO, GIMLI, SPARKLE, KNOT, QARMA, PIPO, WARP, CHAM
+- **Representations (10)**: Raw, Diff, Concat, Bit-Slice, Word, Intermed, Noisy, Joint P-C, Stats, Sequential
 
-## Features & Ciphers Implemented
-- **Ciphers**: SKINNY, CRAFT, ASCON, SATURNIN, GIFT-64/128, XOODOO, GIMLI, SPARKE, KNOT, QARMA, PIPO, WARP, CHAM
-- **Representations**: Raw Pairs, Differences, Sliced/Concat Data formats, Statistics, and Intermediates.
-- **Models**: Convolutional (ResNet), Multi-Layer Perceptron, Siamese Networks, MINE.
+---
+
+## 📄 Report
+
+See `Neural_Cryptanalysis_Report.pdf` for the full academic write-up.
